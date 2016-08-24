@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_mygenerater" default="compile.module.mygenerater">
+  <dirname property="module.mygenerater.basedir" file="${ant.file.module_mygenerater}"/>
+  
+  <property name="module.jdk.home.mygenerater" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.mygenerater" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.mygenerater" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.mygenerater" value="-encoding UTF-8 -source 1.7 -target 1.5 ${compiler.args}"/>
+  
+  <property name="mygenerater.output.dir" value="${module.mygenerater.basedir}/target/classes"/>
+  <property name="mygenerater.testoutput.dir" value="${module.mygenerater.basedir}/target/test-classes"/>
+  
+  <path id="mygenerater.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="mygenerater.module.production.classpath">
+    <path refid="${module.jdk.classpath.mygenerater}"/>
+  </path>
+  
+  <path id="mygenerater.runtime.production.module.classpath">
+    <pathelement location="${mygenerater.output.dir}"/>
+  </path>
+  
+  <path id="mygenerater.module.classpath">
+    <path refid="${module.jdk.classpath.mygenerater}"/>
+    <pathelement location="${mygenerater.output.dir}"/>
+    <path refid="library.maven:_junit:junit:3.8.1.classpath"/>
+  </path>
+  
+  <path id="mygenerater.runtime.module.classpath">
+    <pathelement location="${mygenerater.testoutput.dir}"/>
+    <pathelement location="${mygenerater.output.dir}"/>
+    <path refid="library.maven:_junit:junit:3.8.1.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.mygenerater">
+    <patternset refid="ignored.files"/>
+    <exclude name="target/**"/>
+    <exclude name="target/classes/**"/>
+    <exclude name="target/classes/org/**"/>
+    <exclude name="target/classes/org/mybatis/**"/>
+    <exclude name="target/classes/org/mybatis/generator/**"/>
+    <exclude name="target/classes/org/mybatis/generator/api/**"/>
+    <exclude name="target/classes/org/mybatis/generator/config/**"/>
+    <exclude name="target/classes/org/mybatis/generator/config/xml/**"/>
+    <exclude name="target/classes/org/mybatis/generator/internal/**"/>
+    <exclude name="target/classes/org/mybatis/generator/internal/util/**"/>
+    <exclude name="target/classes/org/mybatis/generator/internal/util/messages/**"/>
+    <exclude name="target/generated-sources/**"/>
+    <exclude name="target/generated-sources/annotations/**"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.mygenerater">
+    <patternset refid="excluded.from.module.mygenerater"/>
+  </patternset>
+  
+  <path id="mygenerater.module.sourcepath">
+    <dirset dir="${module.mygenerater.basedir}/../../聚贸">
+      <include name="myGenerater/src/main/java"/>
+      <include name="myGenerater/src/main/resources"/>
+    </dirset>
+  </path>
+  
+  <path id="mygenerater.module.test.sourcepath">
+    <dirset dir="${module.mygenerater.basedir}/../../聚贸">
+      <include name="myGenerater/src/test/java"/>
+      <include name="myGenerater"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.mygenerater" depends="compile.module.mygenerater.production,compile.module.mygenerater.tests" description="Compile module myGenerater"/>
+  
+  <target name="compile.module.mygenerater.production" depends="register.custom.compilers" description="Compile module myGenerater; production classes">
+    <mkdir dir="${mygenerater.output.dir}"/>
+    <javac2 destdir="${mygenerater.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.mygenerater}/javac">
+      <compilerarg line="${compiler.args.mygenerater}"/>
+      <bootclasspath refid="mygenerater.module.bootclasspath"/>
+      <classpath refid="mygenerater.module.production.classpath"/>
+      <src refid="mygenerater.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.mygenerater"/>
+    </javac2>
+    
+    <copy todir="${mygenerater.output.dir}">
+      <fileset dir="${module.mygenerater.basedir}/src/main/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.mygenerater.basedir}/src/main/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.mygenerater.tests" depends="register.custom.compilers,compile.module.mygenerater.production" description="compile module myGenerater; test classes" unless="skip.tests">
+    <mkdir dir="${mygenerater.testoutput.dir}"/>
+    <javac2 destdir="${mygenerater.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.mygenerater}/javac">
+      <compilerarg line="${compiler.args.mygenerater}"/>
+      <bootclasspath refid="mygenerater.module.bootclasspath"/>
+      <classpath refid="mygenerater.module.classpath"/>
+      <src refid="mygenerater.module.test.sourcepath"/>
+      <patternset refid="excluded.from.compilation.mygenerater"/>
+    </javac2>
+    
+    <copy todir="${mygenerater.testoutput.dir}">
+      <fileset dir="${module.mygenerater.basedir}/src/test/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.mygenerater.basedir}">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="clean.module.mygenerater" description="cleanup module">
+    <delete dir="${mygenerater.output.dir}"/>
+    <delete dir="${mygenerater.testoutput.dir}"/>
+  </target>
+</project>

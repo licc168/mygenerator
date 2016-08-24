@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.licc.web.dao.TalentGainsMapper">
+
+  <resultMap id="BaseResultMap" type="com.licc.web.model.TalentGains">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="ORDER_ID" jdbcType="BIGINT" property="orderId" />
+    <result column="TALENT_USER_ID" jdbcType="BIGINT" property="talentUserId" />
+    <result column="GAINS_NUM" jdbcType="DECIMAL" property="gainsNum" />
+    <result column="SCALE_ID" jdbcType="BIGINT" property="scaleId" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    ID, ORDER_ID, TALENT_USER_ID, GAINS_NUM, SCALE_ID
+  </sql>
+
+  <select id="page" parameterType="com.licc.common.util.QueryParameters" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from talent_gains
+    <if test="params != null">
+      <include refid="exampleCondition" />
+    </if>
+    <if test="sorts != null">
+      <foreach collection="sorts" index="key" item="value" open="order by" separator=",">
+        ${key} ${value}
+      </foreach>
+    </if>
+    <if test="page != null">
+      limit #{page.from} , #{page.size}
+    </if>
+  </select>
+
+  <sql id="exampleCondition">
+    <where>
+      <if test="params.orderId != null">
+        and ORDER_ID = #{params.orderId}
+      </if>
+      <if test="params.talentUserId != null">
+        and TALENT_USER_ID = #{params.talentUserId}
+      </if>
+      <if test="params.gainsNum != null">
+        and GAINS_NUM = #{params.gainsNum}
+      </if>
+      <if test="params.scaleId != null">
+        and SCALE_ID = #{params.scaleId}
+      </if>
+    </where>
+  </sql>
+
+  <select id="count" parameterType="com.licc.common.util.QueryParameters" resultType="int">
+    select
+    count(1)
+    from talent_gains
+    <if test="params != null">
+      <include refid="exampleCondition" />
+    </if>
+  </select>
+
+  <select id="get" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from talent_gains
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+
+  <delete id="delete" parameterType="java.lang.Long">
+    delete from talent_gains
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insert" parameterType="com.licc.web.model.TalentGains">
+    insert into talent_gains (ID, ORDER_ID, TALENT_USER_ID, 
+      GAINS_NUM, SCALE_ID)
+    values (#{id,jdbcType=BIGINT}, #{orderId,jdbcType=BIGINT}, #{talentUserId,jdbcType=BIGINT}, 
+      #{gainsNum,jdbcType=DECIMAL}, #{scaleId,jdbcType=BIGINT})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.licc.web.model.TalentGains">
+    insert into talent_gains
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="orderId != null">
+        ORDER_ID,
+      </if>
+      <if test="talentUserId != null">
+        TALENT_USER_ID,
+      </if>
+      <if test="gainsNum != null">
+        GAINS_NUM,
+      </if>
+      <if test="scaleId != null">
+        SCALE_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="orderId != null">
+        #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="talentUserId != null">
+        #{talentUserId,jdbcType=BIGINT},
+      </if>
+      <if test="gainsNum != null">
+        #{gainsNum,jdbcType=DECIMAL},
+      </if>
+      <if test="scaleId != null">
+        #{scaleId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateSelective" parameterType="com.licc.web.model.TalentGains">
+    update talent_gains
+    <set>
+      <if test="orderId != null">
+        ORDER_ID = #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="talentUserId != null">
+        TALENT_USER_ID = #{talentUserId,jdbcType=BIGINT},
+      </if>
+      <if test="gainsNum != null">
+        GAINS_NUM = #{gainsNum,jdbcType=DECIMAL},
+      </if>
+      <if test="scaleId != null">
+        SCALE_ID = #{scaleId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+  <update id="update" parameterType="com.licc.web.model.TalentGains">
+    update talent_gains
+    set ORDER_ID = #{orderId,jdbcType=BIGINT},
+      TALENT_USER_ID = #{talentUserId,jdbcType=BIGINT},
+      GAINS_NUM = #{gainsNum,jdbcType=DECIMAL},
+      SCALE_ID = #{scaleId,jdbcType=BIGINT}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
